@@ -47,7 +47,7 @@ TEMPLATE(dT)
 dT sum(dT *data)
 {
     dT sum = new dT();
-    FOR(i, 0, length<dT><dT>(data))
+    FOR(i, 0, length<dT>(data))
     sum = sum + data[i];
     return sum;
 }
