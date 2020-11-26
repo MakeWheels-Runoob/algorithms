@@ -10,29 +10,30 @@
 #ifndef ALGORITHMS_H_
 #define ALGORITHMS_H_ 1
 #include <iostream>
-#include <iomanip>
-#include <cstdio>
 #include <algorithm>
+#include <iomanip>
 #include <vector>
 #include <map>
-#include <string>
-#include <cstring>
-#include <sstream>
+#include <stack>
+#include <queue>
 #include <cmath>
-#include "stdarg.h"
+#include <cstring>
+#include <string>
+#include <sstream>
+
 #ifdef DEBUG
 #define LOG fprintf(stderr, "At function %s,line %d.\n", __FUNCTION__, __LINE__)
 #endif
 #define TEMPLATE(name) template <class name>
-#define TEMPLATES(name1, name2) template <class name1, class name2>
-#define TTEMPLATE(types, name) template <types name>
-#define TTEMPLATES(type1, name1, type2, name2) template <type1 name1, type2 name2>
+#define TEMPLATE_TWO_NAME(name1, name2) template <class name1, class name2>
+#define SET_TYPE_TEMPLATE(types, name) template <types name>
+#define SET_TYPE_TEMPLATE_TWO_NAME(type1, name1, type2, name2) template <type1 name1, type2 name2>
 
 #define FOR(i, s, e) for (ull(i) = (s); (i) < (e); ++(i))
-#define FORS(i, s, e, step) for (auto(i) = (s); (i) < (e); (i) += (step))
-#define FORI(i, s, e) for (ull(i) = (s)-1; (i) >= (e); --(i))
-#define FORIS(i, s, e, step) for (auto(i) = (s)-1; (i) >= (e); (i) -= (step))
-#define FORE(i, a) for (auto && (i) : (a))
+#define FOR_SET_STEP(i, s, e, step) for (auto(i) = (s); (i) < (e); (i) += (step))
+#define FOR_REVERSE(i, s, e) for (ull(i) = (s)-1; (i) >= (e); --(i))
+#define FOR_REVERSE_SET_STEP(i, s, e, step) for (auto(i) = (s)-1; (i) >= (e); (i) -= (step))
+#define FOR_RANGE(i, a) for (auto && (i) : (a))
 
 #define ll long long
 #define ull unsigned long long
@@ -57,7 +58,7 @@ dT sum(dT *data)
 #define ERROR_NAMESPACE_
 namespace error
 {
-    const enum ERROR {
+    const enum kError {
         STACK = 50,
         QUEUE,
         LIST = 70,
@@ -70,29 +71,29 @@ namespace error
     {
     public:
         std::string msg, s;
-        StructError(std::string msg, ERROR type)
+        StructError(std::string msg, kError type)
         {
             switch (type)
             {
-            case ERROR::STACK:
+            case kError::STACK:
                 s = "Stack";
                 break;
-            case ERROR::QUEUE:
+            case kError::QUEUE:
                 s = "Queue";
                 break;
-            case ERROR::LIST:
+            case kError::LIST:
                 s = "List";
                 break;
-            case ERROR::TREE:
+            case kError::TREE:
                 s = "Tree";
                 break;
-            case ERROR::GRAPH:
+            case kError::GRAPH:
                 s = "Graph";
                 break;
-            case ERROR::VECTOR:
+            case kError::VECTOR:
                 s = "Vector";
                 break;
-            case ERROR::MATRIX:
+            case kError::MATRIX:
                 s = "Matrix";
                 break;
             }
@@ -109,18 +110,18 @@ namespace Struct
 {
 
     TEMPLATE(dT)
-    class node
+    class Node
     {
         dT data;
-        node<dT> *next, *pre;
+        Node<dT> *next, *pre;
 
     public:
-        node()
+        Node()
         {
             next = nullptr;
             pre = nullptr;
         }
-        node(nT data)
+        Node(nT data)
         {
             this->data = data;
             next = nullptr;
@@ -129,37 +130,37 @@ namespace Struct
     };
 
     TEMPLATE(dT)
-    class stack
+    class Stack
     {
-        node<dT> *head;
+        Node<dT> *head;
         ull len;
 
     public:
-        stack()
+        Stack()
         {
             len = 0;
         }
-        stack(dT data)
+        Stack(dT data)
         {
             len = 0;
             head->data = data;
         }
-        stack(dT *array)
+        Stack(dT *array)
         {
             head->data = array[0];
-            node<dT> *pre = head;
+            Node<dT> *pre = head;
             for (ull index = 1, len = 0; index < length<dT><dT>(array); index++, len++)
             {
-                node<dT> *next = new node<dT>(array[index]);
+                Node<dT> *next = new Node<dT>(array[index]);
                 next->next = pre;
                 pre->pre = next;
                 pre = next;
             }
             head = pre;
         }
-        ~stack()
+        ~Stack()
         {
-            node<dT> *now = head;
+            Node<dT> *now = head;
             do
             {
                 now = now->next;
@@ -168,11 +169,11 @@ namespace Struct
             delete now;
             delete len;
         }
-        stack operator=(const stack<dT> &s)
+        Stack operator=(const Stack<dT> &s)
         {
             len = s.len;
             head->data = s.head->data;
-            node<dT> *now = head, nows = s.head;
+            Node<dT> *now = head, nows = s.head;
             while (nows->next)
             {
                 now = now->next;
@@ -182,13 +183,13 @@ namespace Struct
                     now->data = nows->data;
                     continue;
                 }
-                now = node<dT>(nows->data);
+                now = Node<dT>(nows->data);
             }
         }
-        stack operator=(const dT *array)
+        Stack operator=(const dT *array)
         {
             len = length<dT>(array);
-            node<dT> *now = head;
+            Node<dT> *now = head;
             FORE(i, array)
             {
                 if (now)
@@ -198,21 +199,21 @@ namespace Struct
                 }
                 else
                 {
-                    now = new node(array[i]);
+                    now = new Node(array[i]);
                     now = now->next;
                 }
             }
         }
         void push(dT data)
         {
-            node<dT> *n = new node<dT>(data);
+            Node<dT> *n = new Node<dT>(data);
             n->next = head;
             head->pre = n;
             ++len;
         }
         void pop()
         {
-            node<dT> *n = head;
+            Node<dT> *n = head;
             head = head->next;
             delete n;
             --len;
@@ -221,48 +222,48 @@ namespace Struct
         {
             return head->data;
         }
-        dT tpop()
+        dT topPop()
         {
             dT data = this->top();
             this->pop();
             --len;
             return data;
         }
-        dT ptop()
+        dT popTop()
         {
             this->pop();
             --len;
             return this->top();
         }
-        ull length<dT>()
+        ull length()
         {
             return len;
         }
-    }; /* class stack */
+    }; /* class Stack */
 
     TEMPLATE(dT)
-    class queue
+    class Queue
     {
-        node<dT> *head, *tail;
+        Node<dT> *head, *tail;
         ull len;
 
     public:
-        queue()
+        Queue()
         {
             tail->next = head;
             head->pre = tail;
             len = 0;
         }
-        queue(dT data)
+        Queue(dT data)
         {
             tail->data = data;
             tail = tail->pre;
             len = 0;
         }
-        queue(dT *array)
+        Queue(dT *array)
         {
             len = length<dT>(array);
-            node<dT> *now = tail, *pre = head;
+            Node<dT> *now = tail, *pre = head;
             FORE(i, array)
             {
                 now->data = array[i];
@@ -273,9 +274,9 @@ namespace Struct
             }
             tail = now;
         }
-        ~queue()
+        ~Queue()
         {
-            node<dT> *now = tail;
+            Node<dT> *now = tail;
             while (now != nullptr)
             {
                 now = now->next;
@@ -285,32 +286,32 @@ namespace Struct
             delete len;
         }
 
-        const queue &operator=(const queue &q);
-        const queue &operator=(const dT *array);
-    }; /* class queue */
+        const Queue &operator=(const Queue &q);
+        const Queue &operator=(const dT *array);
+    }; /* class Queue */
 
     TEMPLATE(dT)
-    class ud_list;
+    class BidirectionalList;
 
     TEMPLATE(dT)
-    class ud_loop_list : public ud_list
+    class BidirectionalCircularList : public BidirectionalList
     {
     public:
     };
 
     TEMPLATE(dT)
-    class binary_tree
+    class BinaryTree
     {
-        class node
+        class Node
         {
             dT data;
-            node *left, *right;
+            Node *left, *right;
 
         public:
-            node() : data(0), left(nullptr), right(nullptr) {}
-            node(dT data) : data(data), left(nullptr), right(nullptr) {}
+            Node() : data(0), left(nullptr), right(nullptr) {}
+            Node(dT data) : data(data), left(nullptr), right(nullptr) {}
         } * head;
-        static void delete_node(node *now)
+        static void delete_node(Node *now)
         {
             if (now->left)
                 delete_node(now->left);
@@ -318,7 +319,7 @@ namespace Struct
                 delete_node(now->right);
             delete now;
         }
-        static void build_tree(node *now, node *bt)
+        static void build_tree(Node *now, Node *bt)
         {
             now->data = bt->data;
             if (bt->left)
@@ -327,7 +328,7 @@ namespace Struct
                     build_tree(now->left, bt->left);
                 else
                 {
-                    now->left = new node();
+                    now->left = new Node();
                     build_tree(now->left, bt->left);
                 }
             }
@@ -337,25 +338,25 @@ namespace Struct
                     build_tree(now->right, bt->right);
                 else
                 {
-                    now->right = new node();
+                    now->right = new Node();
                     build_tree(now->right, bt->right);
                 }
             }
         }
 
     public:
-        binary_tree() {}
-        binary_tree(dT data)
+        BinaryTree() {}
+        BinaryTree(dT data)
         {
             head->data = data;
         }
-        binary_tree(std::string types, dT *data)
+        BinaryTree(std::string types, dT *data)
         {
             if (types.length<dT>() != length<dT>(data))
             {
                 return;
             }
-            node *now = head;
+            Node *now = head;
             FOR(i, 0, types.length<dT>())
             {
                 switch (types[i])
@@ -369,7 +370,7 @@ namespace Struct
                     }
                     else
                     {
-                        now->left = new node(data[i]);
+                        now->left = new Node(data[i]);
                         now = now->left;
                     }
                     break;
@@ -382,7 +383,7 @@ namespace Struct
                     }
                     else
                     {
-                        now->right = new node(data[i]);
+                        now->right = new Node(data[i]);
                         now = now->right;
                     }
                     break;
@@ -391,13 +392,13 @@ namespace Struct
                 }
             }
         }
-        ~binary_tree()
+        ~BinaryTree()
         {
             delete_node(head);
         }
-        binary_tree &insert(std::string types, dT data)
+        BinaryTree &insert(std::string types, dT data)
         {
-            node *now = head;
+            Node *now = head;
             FOR(i, 0, types.length<dT>())
             {
                 switch (types[i])
@@ -434,13 +435,13 @@ namespace Struct
             }
             else
             {
-                now = new node(data);
+                now = new Node(data);
             }
             return *this;
         }
-        binary_tree &insert(std::string types, binary_tree<dT> bt)
+        BinaryTree &insert(std::string types, BinaryTree<dT> bt)
         {
-            node *now = head;
+            Node *now = head;
             FOR(i, 0, types.length<dT>())
             {
                 switch (types[i])
@@ -476,7 +477,7 @@ namespace Struct
         }
         dT query(std::string types)
         {
-            node *now = head;
+            Node *now = head;
             FOR(i, 0, types.length<dT>())
             {
                 switch (types[i])
@@ -499,41 +500,41 @@ namespace Struct
             }
             return now->data;
         }
-    }; /* class binary_tree */
+    }; /* class BinaryTree */
 
-    TTEMPLATES(class, dT, int, dim)
-    class tree : public binary_tree
+    SET_TYPE_TEMPLATE_TWO_NAME(class, dT, int, dim)
+    class Tree : public BinaryTree
     {
     public:
     };
 
     TEMPLATE(dT)
-    class edge;
+    class Edge;
 
     TEMPLATE(dT)
-    class point;
+    class Point;
 
-    TEMPLATES(eT, pT)
-    class graph;
+    TEMPLATE_TWO_NAME(eT, pT)
+    class Graph;
 } /* namespace Struct */
 #endif
 
 #ifndef MATH_NAMESPACE_
 #define MATH_NAMESPACE_
-namespace math
+namespace Math
 {
     TEMPLATE(eT)
-    class reduce
+    class Reduce
     {
         /****************
-         * > a=reduce<int>([](int a,int b){return a+b;});
+         * > a=Reduce<int>([](int a,int b){return a+b;});
          * > list={1,2,3};
          * > a(list); // 6
         ****************/
         eT (*func)(eT, eT);
 
     public:
-        reduce(eT (*func)(eT, eT))
+        Reduce(eT (*func)(eT, eT))
         {
             this->func = func;
         }
@@ -546,21 +547,21 @@ namespace math
             }
             return ans;
         }
-    }; /* class reduce */
+    }; /* class Reduce */
 
-    class complex
+    class Complex
     {
     public:
         double real, imaginary;
-        complex() {}
-        complex(double real = 0.0, double imaginary = 0.0)
+        Complex() {}
+        Complex(double real = 0.0, double imaginary = 0.0)
         {
             this->real = real;
             this->imaginary = imaginary;
         }
-        ~complex() {}
+        ~Complex() {}
 
-        const complex &operator=(const complex &c)
+        const Complex &operator=(const Complex &c)
         {
             real = c.real;
             imaginary = c.imaginary;
@@ -571,69 +572,69 @@ namespace math
         {
             return sqrt(real * real + imaginary * imaginary);
         }
-        const complex &conjugate() const
+        const Complex &conjugate() const
         {
-            return complex(real, -imaginary);
+            return Complex(real, -imaginary);
         }
 
-        const complex &operator+(const complex &c) const
+        const Complex &operator+(const Complex &c) const
         {
-            return complex(real + c.real, imaginary + c.imaginary);
+            return Complex(real + c.real, imaginary + c.imaginary);
         }
-        const complex &operator-(const complex &c) const
+        const Complex &operator-(const Complex &c) const
         {
-            return complex(real - c.real, imaginary - c.imaginary);
+            return Complex(real - c.real, imaginary - c.imaginary);
         }
-        const complex &operator*(const complex &c) const
+        const Complex &operator*(const Complex &c) const
         {
-            return complex(real * c.real - imaginary * c.imaginary, real * c.imaginary + imaginary * c.real);
+            return Complex(real * c.real - imaginary * c.imaginary, real * c.imaginary + imaginary * c.real);
         }
-        const complex &operator/(const complex &c) const
+        const Complex &operator/(const Complex &c) const
         {
-            return complex((real * c.real + imaginary * c.imaginary) / (c.real * c.real + c.imaginary * c.imaginary),
+            return Complex((real * c.real + imaginary * c.imaginary) / (c.real * c.real + c.imaginary * c.imaginary),
                            (imaginary * c.real - real * c.imaginary) / (c.real * c.real + c.imaginary * c.imaginary));
         }
 
-        const complex &operator+=(const complex &c)
+        const Complex &operator+=(const Complex &c)
         {
             (*this) = (*this) + c;
             return *this;
         }
-        const complex &operator-=(const complex &c)
+        const Complex &operator-=(const Complex &c)
         {
             (*this) = (*this) - c;
             return *this;
         }
-        const complex &operator*=(const complex &c)
+        const Complex &operator*=(const Complex &c)
         {
             (*this) = (*this) * c;
             return *this;
         }
-        const complex &operator/=(const complex &c)
+        const Complex &operator/=(const Complex &c)
         {
             (*this) = (*this) / c;
             return *this;
         }
 
-        bool operator==(const complex &c) const
+        bool operator==(const Complex &c) const
         {
             return real == c.real && imaginary == c.imaginary;
         }
-        bool operator!=(const complex &c) const
+        bool operator!=(const Complex &c) const
         {
             return !((*this) == c);
         }
-    }; /* class complex */
+    }; /* class Complex */
 
     TEMPLATE(dT)
-    class vector;
+    class Vector;
 
     TEMPLATE(dT)
-    class matrix;
+    class Matrix;
 
 #ifndef MODEL_NAMESPACE_
 #define MODEL_NAMESPACE_
-    namespace model
+    namespace Model
     {
 #define VMODEL(name) class name##VirusModel
         VMODEL()
@@ -654,7 +655,7 @@ namespace math
             void next(int step = 1);
             void print(FILE *file = stdout);
         }; /* class VirusModel */
-        
+
         VMODEL(SI) : public VirusModel
         {
             ull susceptible;
@@ -747,26 +748,26 @@ namespace math
                 fprintf(file, "ratio of from infectious to removed:%f\n", ItoR);
             }
         };
-    } /* namespace model */
+    } /* namespace Model */
 #endif
-} /* namespace math */
+} /* namespace Math */
 #endif
 
 #ifndef TYPE_NAMESPACE_
 #define TYPE_NAMESPACE_
-namespace type
+namespace Type
 {
     class BigInteger
     {
         bool sign; /* true -> +  false -> - */
         ull digit;
         std::vector<ull> data;
-        static const ull MOD = 1000000000000000ULL;
-        static const int WIDTH = 15;
+        static const ull kMOD = 1000000000000000ULL;
+        static const int kWIDTH = 15;
         static ull str_to_ull(std::string str)
         {
             ull ans = 0;
-            FORE(c, str)
+            FOR_RANGE(c, str)
             ans = ans * 10 + c - '0';
             return ans;
         }
@@ -778,21 +779,21 @@ namespace type
             sign = (num >= 0);
             while (num)
             {
-                data.push_back(num % MOD);
-                num /= MOD;
+                data.push_back(num % kMOD);
+                num /= kMOD;
             }
             digit = data.size();
         }
         BigInteger(std::string str)
         {
             sign = (str[0] != '-');
-            FORE(c, str)
+            FOR_RANGE(c, str)
             if (c < '0' || c > '9')
                 goto end;
-            FORIS(i, str.length(), WIDTH, WIDTH)
-            data.push_back(str_to_ull(str.substr(i - WIDTH, WIDTH)));
-            if (str.length() % WIDTH)
-                data.push_back(str_to_ull(str.substr(0, str.length() % WIDTH)));
+            FOR_REVERSE_SET_STEP(i, str.length(), kWIDTH, kWIDTH)
+            data.push_back(str_to_ull(str.substr(i - kWIDTH, kWIDTH)));
+            if (str.length() % kWIDTH)
+                data.push_back(str_to_ull(str.substr(0, str.length() % kWIDTH)));
         end:
             digit = data.size();
         }
@@ -805,7 +806,7 @@ namespace type
             sign = b.sign;
             digit = b.digit;
             data.clear();
-            FORE(d, b.data)
+            FOR_RANGE(d, b.data)
             data.push_back(d);
             return *this;
         }
@@ -815,8 +816,8 @@ namespace type
             data.clear();
             while (num)
             {
-                data.push_back(num % MOD);
-                num /= MOD;
+                data.push_back(num % kMOD);
+                num /= kMOD;
             }
             digit = data.size();
             return *this;
@@ -825,13 +826,13 @@ namespace type
         {
             sign = (str[0] != '-');
             data.clear();
-            FORE(c, str)
+            FOR_RANGE(c, str)
             if (c < '0' || c > '9')
                 goto end;
-            FORIS(i, str.length(), WIDTH, WIDTH)
-            data.push_back(str_to_ull(str.substr(i - WIDTH, WIDTH)));
-            if (str.length() % WIDTH)
-                data.push_back(str_to_ull(str.substr(0, str.length() % WIDTH)));
+            FOR_REVERSE_SET_STEP(i, str.length(), kWIDTH, kWIDTH)
+            data.push_back(str_to_ull(str.substr(i - kWIDTH, kWIDTH)));
+            if (str.length() % kWIDTH)
+                data.push_back(str_to_ull(str.substr(0, str.length() % kWIDTH)));
         end:
             digit = data.size();
             return *this;
@@ -845,7 +846,7 @@ namespace type
         {
             if (digit != b.digit)
                 return digit < b.digit;
-            FORI(i, digit, 0)
+            FOR_REVERSE(i, digit, 0)
             {
                 if (data[i] < b.data[i])
                     return true;
@@ -913,7 +914,7 @@ namespace type
             if (sign)
             {
                 ull now = 0;
-                while (now < digit && data[now] + 1 >= MOD)
+                while (now < digit && data[now] + 1 >= kMOD)
                 {
                     data[now++] = 0;
                 }
@@ -935,7 +936,7 @@ namespace type
                     --data[now];
                     if (data[now] >= 0)
                         break;
-                    data[now] += MOD;
+                    data[now] += kMOD;
                     if (now + 1 == digit)
                     {
                         ++digit;
@@ -978,18 +979,18 @@ namespace type
                     {
                         if (i >= digit)
                         {
-                            ans.data.push_back((b.data[i] + g) % MOD);
-                            g = (b.data[i] + g) / MOD;
+                            ans.data.push_back((b.data[i] + g) % kMOD);
+                            g = (b.data[i] + g) / kMOD;
                         }
                         else if (i >= b.digit)
                         {
-                            ans.data.push_back((data[i] + g) % MOD);
-                            g = (data[i] + g) / MOD;
+                            ans.data.push_back((data[i] + g) % kMOD);
+                            g = (data[i] + g) / kMOD;
                         }
                         else
                         {
-                            ans.data.push_back((data[i] + b.data[i] + g) % MOD);
-                            g = (data[i] + b.data[i] + g) / MOD;
+                            ans.data.push_back((data[i] + b.data[i] + g) % kMOD);
+                            g = (data[i] + b.data[i] + g) / kMOD;
                         }
                     }
                 }
@@ -1016,7 +1017,7 @@ namespace type
         }
         const BigInteger &operator-(const BigInteger &b) const;
     }; /* class BigInteger */
-    
+
     class BigDecimal
     {
         bool sign;
@@ -1028,6 +1029,6 @@ namespace type
         static const int kWIDTH = 15;
         static const long double kMOD_OF_DECIMAL = 0.;
     }; /* class BigDecimal */
-} /* namespace type */
-#endif /*TYPE_NAMESPACE_ */
-#endif /*ALGORITHMS_H_*/
+} /* namespace Type */
+#endif /* TYPE_NAMESPACE_ */
+#endif /* ALGORITHMS_H_ */
