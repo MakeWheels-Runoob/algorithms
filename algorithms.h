@@ -53,6 +53,8 @@ dT sum(dT *data)
 }
 
 #ifdef DEBUG
+#ifndef ERROR_NAMESPACE_
+#define ERROR_NAMESPACE_
 namespace error
 {
     const enum ERROR {
@@ -99,7 +101,10 @@ namespace error
     };
 } /* namespace error */
 #endif
+#endif
 
+#ifndef STRUCT_NAMESPACE_
+#define STRUCT_NAMESPACE_
 namespace Struct
 {
 
@@ -511,7 +516,10 @@ namespace Struct
     TEMPLATES(eT, pT)
     class graph;
 } /* namespace Struct */
+#endif
 
+#ifndef MATH_NAMESPACE_
+#define MATH_NAMESPACE_
 namespace math
 {
     TEMPLATE(eT)
@@ -623,6 +631,8 @@ namespace math
     TEMPLATE(dT)
     class matrix;
 
+#ifndef MODEL_NAMESPACE_
+#define MODEL_NAMESPACE_
     namespace model
     {
 #define VMODEL(name) class name##VirusModel
@@ -738,8 +748,12 @@ namespace math
             }
         };
     } /* namespace model */
+#endif
 } /* namespace math */
+#endif
 
+#ifndef TYPE_NAMESPACE_
+#define TYPE_NAMESPACE_
 namespace type
 {
     class BigInteger
@@ -1015,4 +1029,5 @@ namespace type
         static const long double kMOD_OF_DECIMAL = 0.;
     }; /* class BigDecimal */
 } /* namespace type */
+#endif /*TYPE_NAMESPACE_ */
 #endif /*ALGORITHMS_H_*/
