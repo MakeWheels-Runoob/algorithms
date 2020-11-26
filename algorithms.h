@@ -233,7 +233,7 @@ namespace Struct
         {
             return len;
         }
-    };
+    }; /* class stack */
 
     TEMPLATE(dT)
     class queue
@@ -282,7 +282,7 @@ namespace Struct
 
         const queue &operator=(const queue &q);
         const queue &operator=(const dT *array);
-    };
+    }; /* class queue */
 
     TEMPLATE(dT)
     class ud_list;
@@ -494,7 +494,7 @@ namespace Struct
             }
             return now->data;
         }
-    };
+    }; /* class binary_tree */
 
     TTEMPLATES(class, dT, int, dim)
     class tree : public binary_tree
@@ -510,7 +510,7 @@ namespace Struct
 
     TEMPLATES(eT, pT)
     class graph;
-} // namespace Struct
+} /* namespace Struct */
 
 namespace math
 {
@@ -538,7 +538,7 @@ namespace math
             }
             return ans;
         }
-    };
+    }; /* class reduce */
 
     class complex
     {
@@ -615,7 +615,7 @@ namespace math
         {
             return !((*this) == c);
         }
-    };
+    }; /* class complex */
 
     TEMPLATE(dT)
     class vector;
@@ -626,10 +626,29 @@ namespace math
     namespace model
     {
 #define VMODEL(name) class name##VirusModel
-        VMODEL(SI)
+        VMODEL()
         {
             ull susceptible;
-            ull infector;
+            ull exposed;
+            ull infectious;
+            ull removed;
+            double StoE;
+            double StoI;
+            double EtoI;
+            double EtoR;
+            double ItoR;
+            double RtoS;
+
+        public:
+            VirusModel();
+            void next(int step = 1);
+            void print(FILE *file = stdout);
+        }; /* class VirusModel */
+        
+        VMODEL(SI) : public VirusModel
+        {
+            ull susceptible;
+            ull infectious;
             double StoI;
 
         public:
@@ -637,24 +656,27 @@ namespace math
             SIVirusModel(ull s = 100, ull i = 1, double stoi = 0.5)
             {
                 susceptible = s;
-                infector = i;
+                infectious = i;
                 StoI = stoi;
             }
-            void next()
+            void next(int step = 1)
             {
-                susceptible += -StoI * susceptible * infector;
-                infector += StoI * susceptible * infector;
+                while (step--)
+                {
+                    susceptible += -StoI * susceptible * infectious;
+                    infectious += StoI * susceptible * infectious;
+                }
             }
-            void print()
+            void print(FILE *file = stdout)
             {
-                printf("Susceptible:%d,Infector:%d\n", susceptible, infector);
-                printf("ratio of from susceptible to infector:%f\n", StoI);
+                fprintf(file, "Susceptible:%d,Infector:%d\n", susceptible, infectious);
+                fprintf(file, "ratio of from susceptible to infector:%f\n", StoI);
             }
         };
         VMODEL(SIS)
         {
             ull susceptible;
-            ull infector;
+            ull infectious;
             double StoI;
             double ItoS;
 
@@ -663,47 +685,56 @@ namespace math
             SISVirusModel(ull s = 100, ull i = 1, double stoi = 0.5, double itos = 0.5)
             {
                 susceptible = s;
-                infector = i;
+                infectious = i;
                 StoI = stoi;
                 ItoS = itos;
             }
-            void next()
+            void next(int step = 1)
             {
-                susceptible += -StoI*susceptible*infector+ItoS*susceptible*infector;
-                infector += StoI*susceptible*infector-ItoS*susceptible*infector;
+                while (step--)
+                {
+                    susceptible += -StoI * susceptible * infectious + ItoS * susceptible * infectious;
+                    infectious += StoI * susceptible * infectious - ItoS * susceptible * infectious;
+                }
             }
-            void print(){
-                printf("Susceptible:%d,Infector:%d\n", susceptible, infector);
-                printf("ratio of from susceptible to infector:%f\n", StoI);
-                printf("ratio of from infector to susceptible:%f\n", ItoS);
+            void print(FILE *file = stdout)
+            {
+                fprintf(file, "Susceptible:%d,Infectious:%d\n", susceptible, infectious);
+                fprintf(file, "ratio of from susceptible to infectious:%f\n", StoI);
+                fprintf(file, "ratio of from infectious to susceptible:%f\n", ItoS);
             }
         };
-        VMODEL(SIR){
+        VMODEL(SIR)
+        {
             ull susceptible;
-            ull infector;
+            ull infectious;
             ull removed;
             double StoI;
             double ItoR;
 
         public:
             SIRVirusModel() {}
-            SIRVirusModel(ull s = 100, ull i = 1, ull r=0, double stoi = 0.5, double itor = 0.5)
+            SIRVirusModel(ull s = 100, ull i = 1, ull r = 0, double stoi = 0.5, double itor = 0.5)
             {
                 susceptible = s;
-                infector = i;
-                removed=r;
+                infectious = i;
+                removed = r;
                 StoI = stoi;
                 ItoR = itor;
             }
-            void next()
+            void next(int step = 1)
             {
-                susceptible += -StoI*susceptible*infector;
-                infector += StoI*susceptible*infector-ItoS*susceptible*infector;
+                while (step--)
+                {
+                    susceptible += -StoI * susceptible * infectious;
+                    infectious += StoI * susceptible * infectious - ItoR * susceptible * infectious;
+                }
             }
-            void print(){
-                printf("Susceptible:%d,Infector:%d\n", susceptible, infector);
-                printf("ratio of from susceptible to infector:%f\n", StoI);
-                printf("ratio of from infector to susceptible:%f\n", ItoS);
+            void print(FILE *file = stdout)
+            {
+                fprintf(file, "Susceptible:%d,Infectious:%d,Removed:%d\n", susceptible, infectious, removed);
+                fprintf(file, "ratio of from susceptible to infectious:%f\n", StoI);
+                fprintf(file, "ratio of from infectious to removed:%f\n", ItoR);
             }
         };
     } /* namespace model */
@@ -970,7 +1001,8 @@ namespace type
             return ans;
         }
         const BigInteger &operator-(const BigInteger &b) const;
-    };
+    }; /* class BigInteger */
+    
     class BigDecimal
     {
         bool sign;
@@ -978,9 +1010,9 @@ namespace type
         ull decimalDigit;
         std::vector<ull> data;
         std::vector<ull> d_data;
-        static const ull MOD = 1000000000000000ULL;
-        static const int WIDTH = 15;
-        static const long double MOD_OF_DECIMAL = 0.;
-    };
-} // namespace type
+        static const ull kMOD = 1000000000000000ULL;
+        static const int kWIDTH = 15;
+        static const long double kMOD_OF_DECIMAL = 0.;
+    }; /* class BigDecimal */
+} /* namespace type */
 #endif /*ALGORITHMS_H_*/
