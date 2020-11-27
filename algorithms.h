@@ -7,6 +7,27 @@
  * This header file contains many useful functions.
  * @copyright Copyright (c) 2020
  */
+/****************************************************************************
+ *                          A L G O R I H T M S . H                         *
+ ****************************************************************************
+ * unsigned long long length(dT *array): length of array
+ * Struct::Stack: likely std::stack
+ *   Struct::Stack::head: top of the stack
+ *   Struct::Stack::len: length of the stack
+ *   Struct::Stack::Stack(): Nothing
+ *   Struct::Stack::Stack(dT data): Press data into the stack
+ *   Struct::Stack::Stack(dT *array): Press the data in the array into the stack in turn
+ *   const Stack<dT>& Struct::Stack::operator=(const Stack<dT> &s): Press the data in a stack into the stack in turn
+ *   const Stack<dT>& Struct::Stack::operator=(const dT *array): Press the data in an array into this stack in turn
+ *   void Struct::Stack::push(dT data): Press in a data to the stack
+ *   void Struct::Stack::pop(): Pop up a data from the stack
+ *   dT top(): Get the stack top data
+ *   const unsigned long long Struct::Stack::length(): Gets the length of the stack
+ *   const unsigned long long Struct::Stack::size(): Equivalent to Struct::Stack::length()
+ *   bool Struct::Stack::empty(): Is the stack empty
+ *   std::string toString(): Convert the stack to string form
+ * Struct::Queue: likely std::queue
+ */
 #ifndef ALGORITHMS_H_
 #define ALGORITHMS_H_
 #include <iostream>
