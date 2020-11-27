@@ -8,9 +8,9 @@
  * @copyright Copyright (c) 2020
  */
 #ifndef ALGORITHMS_H_
-#define ALGORITHMS_H_ 1
-#include <cstdio>
+#define ALGORITHMS_H_
 #include <iostream>
+#include <cstdio>
 #include <algorithm>
 #include <iomanip>
 #include <vector>
@@ -24,10 +24,12 @@
 
 #ifdef DEBUG
 #define LOG fprintf(stderr, "At function %s,line %d.\n", __FUNCTION__, __LINE__)
+#else
+#define LOG
 #endif
 #define TEMPLATE(name) template <class name>
 #define TEMPLATE_TWO_NAME(name1, name2) template <class name1, class name2>
-#define SET_TYPE_TEMPLATE(types, name) template <types name>
+#define SET_TYPE_TEMPLATE(type, name) template <type name>
 #define SET_TYPE_TEMPLATE_TWO_NAME(type1, name1, type2, name2) template <type1 name1, type2 name2>
 
 #define FOR(i, s, e) for (ull(i) = (s); (i) < (e); ++(i))
@@ -115,6 +117,7 @@ namespace Struct
     {
         dT data;
         Node<dT> *next, *pre;
+        class type = dT;
 
     public:
         Node()
@@ -127,6 +130,10 @@ namespace Struct
             this->data = data;
             next = nullptr;
             pre = nullptr;
+        }
+        std::string string() const
+        {
+            return static_cast<std::string>(data);
         }
     };
 
@@ -219,7 +226,7 @@ namespace Struct
             delete n;
             --len;
         }
-        dT top()
+        dT top() const
         {
             return head->data;
         }
@@ -236,9 +243,20 @@ namespace Struct
             --len;
             return this->top();
         }
-        ull length()
+        ull length() const
         {
             return len;
+        }
+        std::string string() const
+        {
+            std::string str;
+            Node<dT> *now = head;
+            while (now)
+            {
+                str << now->string();
+                now = now->next;
+            }
+            return str;
         }
     }; /* class Stack */
 
@@ -289,6 +307,17 @@ namespace Struct
 
         const Queue &operator=(const Queue &q);
         const Queue &operator=(const dT *array);
+        std::string string() const
+        {
+            std::string str;
+            Node<dT> *now = head;
+            while (now)
+            {
+                str << now->string();
+                now = now->pre;
+            }
+            return str;
+        }
     }; /* class Queue */
 
     TEMPLATE(dT)
@@ -626,6 +655,11 @@ namespace Math
             return !((*this) == c);
         }
     }; /* class Complex */
+    std::ostream &operator<<(std::ostream &out, const Complex &c)
+    {
+        out << c.real << (c.imaginary < 0 ? "-" : "+") << c.imaginary << "j";
+        return out;
+    }
 
     TEMPLATE(dT)
     class Vector;
@@ -1018,6 +1052,8 @@ namespace Type
         }
         const BigInteger &operator-(const BigInteger &b) const;
     }; /* class BigInteger */
+    std::ostream &operator<<(std::ostream &out, BigInteger &b);
+    std::istream &operator>>(std::istream &in, BigInteger &b);
 
     class BigDecimal
     {
@@ -1030,6 +1066,8 @@ namespace Type
         static const int kWIDTH = 15;
         static const long double kMOD_OF_DECIMAL = 0.;
     }; /* class BigDecimal */
+    std::ostream &operator<<(std::ostream &out, BigDecimal &b);
+    std::istream &operator>>(std::istream &in, BigDecimal &b);
 } /* namespace Type */
 #endif /* TYPE_NAMESPACE_ */
 #endif /* ALGORITHMS_H_ */
