@@ -8,7 +8,7 @@ def rand(start=0, end=1, digit=0):
 
 
 def sigmoid(x):
-    return 1 / (1 + np.exp(x))
+    return 1 / (1 + pow(math.e,-x))
 
 
 def summation(func, start=0, end=1, step=1):
