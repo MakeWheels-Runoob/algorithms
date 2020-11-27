@@ -1,7 +1,7 @@
 /**
  * @file algorithms.h
  * @author Richard
- * @brief 
+ * @brief
  * @version 0.4
  * @date 2020-11-25
  * This header file contains many useful functions.
@@ -131,7 +131,7 @@ namespace Struct
             next = nullptr;
             pre = nullptr;
         }
-        std::string string() const
+        std::string toString() const
         {
             return static_cast<std::string>(data);
         }
@@ -212,6 +212,7 @@ namespace Struct
                 }
             }
         }
+
         void push(dT data)
         {
             Node<dT> *n = new Node<dT>(data);
@@ -243,11 +244,21 @@ namespace Struct
             --len;
             return this->top();
         }
-        ull length() const
+
+        const ull length() const
         {
             return len;
         }
-        std::string string() const
+        const ull size() const
+        {
+            return len;
+        }
+        bool empty() const
+        {
+            return len == 0;
+        }
+
+        const std::string toString() const
         {
             std::string str;
             Node<dT> *now = head;
@@ -265,6 +276,15 @@ namespace Struct
     {
         Node<dT> *head, *tail;
         ull len;
+        static inline void delete_from(Node<dT> *node)
+        {
+            Node<dT> *now = node;
+            while (now)
+            {
+                now = now->pre;
+                delete now->next;
+            }
+        }
 
     public:
         Queue()
@@ -277,7 +297,7 @@ namespace Struct
         {
             tail->data = data;
             tail = tail->pre;
-            len = 0;
+            len = 1;
         }
         Queue(dT *array)
         {
@@ -305,9 +325,80 @@ namespace Struct
             delete len;
         }
 
-        const Queue &operator=(const Queue &q);
-        const Queue &operator=(const dT *array);
-        std::string string() const
+        const Queue &operator=(const Queue &q)
+        {
+            Node<dT> *now = this->head, *nowq = q.head;
+            len = q.len;
+            while (nowq)
+            {
+                if (now)
+                {
+                    now->data = nowq->data;
+                }
+                else
+                {
+                    now = new Node<dT>(nowq->data);
+                }
+                now = now->pre;
+                nowq = nowq->pre;
+            }
+            delete_from(now);
+            return *this;
+        }
+        const Queue &operator=(const dT *array)
+        {
+            Node<dT> *now = this->head;
+            len = length<dT>(array);
+            FOR(i, 0, len)
+            {
+                if (now)
+                {
+                    now->data = array[i];
+                }
+                else
+                {
+                    now = new Node<dT>(array[i]);
+                }
+                now = now->pre;
+            }
+            delete_from(now);
+            return *this;
+        }
+
+        void push(dT data)
+        {
+            tail->data = data;
+            tail = tail->pre;
+            ++len;
+        }
+        void pop()
+        {
+            head = head->pre;
+            delete head->next;
+            --len;
+        }
+        const dT front() const
+        {
+            return head->pre->data;
+        }
+        const dT tail() const
+        {
+            return tail->next->data;
+        }
+        const ull length() const
+        {
+            return len;
+        }
+        const ull size() const
+        {
+            return len;
+        }
+        bool empty() const
+        {
+            return len == 0;
+        }
+
+        std::string toString() const
         {
             std::string str;
             Node<dT> *now = head;
@@ -532,7 +623,7 @@ namespace Struct
         }
     }; /* class BinaryTree */
 
-    SET_TYPE_TEMPLATE_TWO_NAME(class, dT, int, dim)
+    SET_TYPE_TEMPLATE_TWO_NAME(class, dT, int, dim = 2)
     class Tree : public BinaryTree
     {
     public:
@@ -660,6 +751,45 @@ namespace Math
         out << c.real << (c.imaginary < 0 ? "-" : "+") << c.imaginary << "j";
         return out;
     }
+    std::istream &operator>>(std::istream &in, Complex &c)
+    {
+        std::string str;
+        in >> str;
+        c.real = c.imaginary = 0;
+        if (str[0] >= '0' && str[0] <= '9')
+            c.real = str[0] - '0';
+        ull wherer = 1;
+        for (; str[wherer] >= '0' && str[wherer] <= '9'; ++wherer)
+        {
+            c.real = c.real * 10 + str[wherer] - '0';
+        }
+        if (str[wherer] == '.')
+        {
+            ull now = 10;
+            for (++wherer; str[wherer] >= '0' && str[wherer] <= '9'; ++wherer)
+            {
+                c.real += (str[wherer] - '0') / now;
+                now *= 10;
+            }
+        }
+        if (str[0] == '-')
+            c.real = -c.real;
+        ull wherei = wherer + 1;
+        for (; str[wherei] >= '0' && str[wherei] <= '9'; ++wherei)
+        {
+            c.imaginary = c.imaginary * 10 + str[wherei] - '0';
+        }
+        if (str[wherei] == '.')
+        {
+            ull now = 10;
+            for (++wherei; str[wherei] >= '0' && str[wherei] <= '9'; ++wherei)
+            {
+                c.real += (str[wherei] - '0') / now;
+                now *= 10;
+            }
+        }
+        return in;
+    }
 
     TEMPLATE(dT)
     class Vector;
@@ -687,7 +817,7 @@ namespace Math
 
         public:
             VirusModel();
-            void next(int step = 1);
+            void next(ull step = 1);
             void print(FILE *file = stdout);
         }; /* class VirusModel */
 
@@ -698,14 +828,13 @@ namespace Math
             double StoI;
 
         public:
-            SIVirusModel() {}
             SIVirusModel(ull s = 100, ull i = 1, double stoi = 0.5)
             {
                 susceptible = s;
                 infectious = i;
                 StoI = stoi;
             }
-            void next(int step = 1)
+            void next(ull step = 1)
             {
                 while (step--)
                 {
@@ -727,7 +856,6 @@ namespace Math
             double ItoS;
 
         public:
-            SISVirusModel() {}
             SISVirusModel(ull s = 100, ull i = 1, double stoi = 0.5, double itos = 0.5)
             {
                 susceptible = s;
@@ -735,7 +863,7 @@ namespace Math
                 StoI = stoi;
                 ItoS = itos;
             }
-            void next(int step = 1)
+            void next(ull step = 1)
             {
                 while (step--)
                 {
@@ -759,7 +887,6 @@ namespace Math
             double ItoR;
 
         public:
-            SIRVirusModel() {}
             SIRVirusModel(ull s = 100, ull i = 1, ull r = 0, double stoi = 0.5, double itor = 0.5)
             {
                 susceptible = s;
@@ -768,12 +895,13 @@ namespace Math
                 StoI = stoi;
                 ItoR = itor;
             }
-            void next(int step = 1)
+            void next(ull step = 1)
             {
                 while (step--)
                 {
                     susceptible += -StoI * susceptible * infectious;
-                    infectious += StoI * susceptible * infectious - ItoR * susceptible * infectious;
+                    infectious += StoI * susceptible * infectious - ItoR * infectious;
+                    removed += ItoR * infectious;
                 }
             }
             void print(FILE *file = stdout)
@@ -781,6 +909,43 @@ namespace Math
                 fprintf(file, "Susceptible:%d,Infectious:%d,Removed:%d\n", susceptible, infectious, removed);
                 fprintf(file, "ratio of from susceptible to infectious:%f\n", StoI);
                 fprintf(file, "ratio of from infectious to removed:%f\n", ItoR);
+            }
+        };
+        VMODEL(SIRS)
+        {
+            ull susceptible;
+            ull infectious;
+            ull removed;
+
+            double StoI;
+            double ItoR;
+            double RtoS;
+
+        public:
+            SIRSVirusModel(ull s = 100, ull i = 1, ull r = 0, double stoi = 0.5, double itor = 0.5, double rtos = 0.5)
+            {
+                susceptible = s;
+                infectious = i;
+                removed = r;
+                StoI = stoi;
+                ItoR = itor;
+                RtoS = rtos;
+            }
+            void next(ull step = 1)
+            {
+                while (step--)
+                {
+                    susceptible += RtoS * removed - StoI * susceptible * infectious;
+                    infectious += StoI * susceptible * infectious - ItoR * infectious;
+                    removed += ItoR * infectious - RtoS * removed;
+                }
+            }
+            void print(FILE *file = stdout)
+            {
+                fprintf(file, "Susceptible:%d,Infectious:%d,Removed:%d\n", susceptible, infectious, removed);
+                fprintf(file, "ratio of from susceptible to infectious:%f\n", StoI);
+                fprintf(file, "ratio of from infectious to removed:%f\n", ItoR);
+                fprintf(file, "ratio of from removed to susceptible:%f\n", RtoS);
             }
         };
     } /* namespace Model */
