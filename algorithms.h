@@ -43,6 +43,7 @@
 #include <string>
 #include <sstream>
 
+#define DEBUG
 #ifdef DEBUG
 #define LOG fprintf(stderr, "At function %s,line %d.\n", __FUNCTION__, __LINE__)
 #else
@@ -68,19 +69,10 @@ inline ull length(dT *array)
     return sizeof(array) / sizeof(dT);
 }
 
-TEMPLATE(dT)
-dT sum(dT *data)
-{
-    dT sum = new dT();
-    FOR(i, 0, length<dT>(data))
-    sum = sum + data[i];
-    return sum;
-}
-
 #ifdef DEBUG
 #ifndef ERROR_NAMESPACE_
 #define ERROR_NAMESPACE_
-namespace error
+namespace Error
 {
     const enum kError {
         STACK = 50,
@@ -124,7 +116,7 @@ namespace error
             this->msg = s + "Error:" + msg;
         }
     };
-} /* namespace error */
+} // namespace Error
 #endif
 #endif
 
@@ -198,7 +190,7 @@ namespace Struct
             delete now;
             delete len;
         }
-        Stack operator=(const Stack<dT> &s)
+        const Stack<dT> &operator=(const Stack<dT> &s)
         {
             len = s.len;
             head->data = s.head->data;
@@ -215,7 +207,7 @@ namespace Struct
                 now = Node<dT>(nows->data);
             }
         }
-        Stack operator=(const dT *array)
+        const Stack<dT> &operator=(const dT *array)
         {
             len = length<dT>(array);
             Node<dT> *now = head;
@@ -251,19 +243,6 @@ namespace Struct
         dT top() const
         {
             return head->data;
-        }
-        dT topPop()
-        {
-            dT data = this->top();
-            this->pop();
-            --len;
-            return data;
-        }
-        dT popTop()
-        {
-            this->pop();
-            --len;
-            return this->top();
         }
 
         const ull length() const
@@ -450,8 +429,16 @@ namespace Struct
             Node *left, *right;
 
         public:
-            Node() : data(0), left(nullptr), right(nullptr) {}
+            Node() : left(nullptr), right(nullptr) {}
             Node(dT data) : data(data), left(nullptr), right(nullptr) {}
+            ~Node()
+            {
+                delete data;
+                left = nullptr;
+                right = nullptr;
+                delete left;
+                delete right;
+            }
         } * head;
         static void delete_node(Node *now)
         {
@@ -495,9 +482,7 @@ namespace Struct
         BinaryTree(std::string types, dT *data)
         {
             if (types.length<dT>() != length<dT>(data))
-            {
-                return;
-            }
+                throw Error::StructError("LenError",Error::kError::TREE);
             Node *now = head;
             FOR(i, 0, types.length<dT>())
             {
@@ -644,10 +629,86 @@ namespace Struct
         }
     }; /* class BinaryTree */
 
-    SET_TYPE_TEMPLATE_TWO_NAME(class, dT, int, dim = 2)
+    SET_TYPE_TEMPLATE_TWO_NAME(class, dT, ull, dim = 2)
     class Tree : public BinaryTree
     {
+        class Node
+        {
+            dT data;
+            Node *next[] = new Node[dim];
+
+        public:
+            Node()
+            {
+                FOR(i, 0, dim)
+                next[i] = nullptr;
+            }
+            Node(dT data)
+            {
+                this->data = data;
+                FOR(i, 0, dim)
+                next[i] = nullptr;
+            }
+            ~Node()
+            {
+                delete data;
+                FOR(i, 0, dim)
+                next[i] = nullptr;
+                delete next[i];
+            }
+        } * head;
+        static void delete_node(Node *now)
+        {
+            FOR(i, 0, dim)
+            {
+                if (now->next[i])
+                    delete_node(now->next[i]);
+            }
+            delete now;
+        }
+        static void build_tree(Node *now, Node *build, ull dimb)
+        {
+            if (dimb > dim)
+                throw Error::StructError("Trying to insert a tree whose dimension is larger than itself.", Error::kError::TREE);
+            now->data = build->data;
+            FOR(i, 0, dim)
+            {
+                if (i >= dimb)
+                    continue;
+                if (build->next[i])
+                {
+                    if (now->next[i])
+                    {
+                        build_tree(now->next[i], build->next[i], dimb);
+                    }
+                    else
+                    {
+                        now->next[i] = new Node();
+                        build_tree(now->next[i], build->next[i], dimb);
+                    }
+                }
+            }
+        }
+
     public:
+        Tree(){}
+        Tree(dT data){
+            head->data=data;
+        }
+        Tree(ull *types,dT *data){
+            if(length<ull>(types)!=length<dT>(data))
+                throw Error::StructError("LenError", Error::kError::TREE);
+            Node *now=head;
+            FOR(i,0,length<ull>(types))
+            {
+                now->data=data[i];
+                now->next[types[i]]=new Node();
+                now=now->next[types[i]];
+            }
+        }
+        ~Tree(){
+            delete_node(head);
+        }
     };
 
     TEMPLATE(dT)
