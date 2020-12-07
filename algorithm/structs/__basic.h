@@ -1,4 +1,5 @@
-#ifdef __cplusplus
+#ifndef STRUCTS_BASIC_H_
+#define STRUCTS_BASIC_H_
 namespace sce {
     template <class dT>
     class node {
@@ -9,22 +10,49 @@ namespace sce {
     public:
         node();
         node(dT data);
+        node(node n);
+        node(tree_node tn);
+        ~node();
     };
-    typedef sce::node<signed char> int8_node_t;
-    typedef sce::node<short> int16_node_t;
-    typedef sce::node<int> int32_node_t;
-    typedef sce::node<long long> int64_node_t;
-    typedef sce::node<char> uint8_node_t;
-    typedef sce::node<unsigned short> uint16_node_t;
-    typedef sce::node<unsigned int> uint32_node_t;
-    typedef sce::node<unsigned long long> uint64_node_t;
-} // namespace sce
-#else
-struct sce_node {
-    auto data;
-    node *next, *pre;
-    node();
-    node(auto data);
-};
-typedef sce_node node_t;
-#endif
+
+    template <class dT>
+    class tree_node : public node {
+    private:
+        dt data;
+        tree_node *next[];
+    public:
+        tree_node();
+        tree_node(dT data);
+        tree_node(tree_node tn);
+        tree_node(node n);
+        ~tree_node();
+    };
+
+    template <class dT>
+    class __struct {
+    protected:
+        node *_head,*_tail;
+        uint64_t _len;
+        __struct();
+        __struct(dT data);
+        __struct(dT data[]);
+        ~__struct();
+
+        virtual void push(dT data);
+        virtual auto pop(bool is_return=false);
+        virtual dT top() const;
+        virtual dT front() const;
+        virtual dT tail() const;
+        virtual bool empty() const;
+        virtual uint64_t size() const;
+        virtual void clean();
+        virtual void insert(uint64_t where,dT data);
+        virtual void as_array(dT array[]) const;
+        virtual dT query(uint64_t where) const;
+        virtual auto del(uint64_t where,bool is_return=false);
+
+        virtual const __struct &operator=(const __struct &s);
+        virtual bool operator==(const __struct &s) const;
+    };
+} /* namespace sce */
+#endif /* STRUCTS_BASIC_H_ */
