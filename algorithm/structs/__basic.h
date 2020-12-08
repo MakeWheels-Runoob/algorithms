@@ -46,9 +46,13 @@ namespace sce {
         virtual dT tail() const;
         virtual bool empty() const;
         virtual uint64_t size() const;
-        virtual void clean();
+        virtual void clear();
         virtual void insert(uint64_t where,dT data);
         virtual void as_array(dT array[]) const;
+        virtual dT get(uint64_t where) const;
+        virtual auto set(uint64_t where,dT data,bool is_return=false);
+        virtual bool has(dT data);
+        virtual uint64_t indexOf(dT data);
         virtual dT query(uint64_t where) const;
         virtual auto del(uint64_t where,bool is_return=false);
 
@@ -56,4 +60,5 @@ namespace sce {
         virtual bool operator==(const __struct &s) const;
     };
 } /* namespace sce */
+#include "realization/__basic.cc"
 #endif /* STRUCTS_BASIC_H_ */

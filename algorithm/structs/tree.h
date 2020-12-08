@@ -23,10 +23,13 @@ namespace sce {
         uint64_t size() const;
         uint64_t height() const;
         uint64_t dimensions() const;
-        void clean();
+        void clear();
 
         const tree &operator=(const tree &t);
         bool operator==(const tree &t) const;
+
+        void traversal(dT to[],int8_t mode=1); // mode=-1:pre; mode=0:mid; mode=1:back;
     };
 }
+#include "realization/tree.cc"
 #endif

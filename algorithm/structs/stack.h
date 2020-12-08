@@ -21,11 +21,12 @@ namespace sce {
 
         bool empty() const;
         uint64_t size() const;
-        void clean();
+        void clear();
         void as_array(dT array[]);
 
         const stack &operator=(const stack &s);
         bool operator==(const stack &s) const;
     };
 } /* namespace sce */
+#include "realization/stack.cc"
 #endif /* STRUCTS_STACK_H_ */

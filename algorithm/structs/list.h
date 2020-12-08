@@ -47,11 +47,12 @@ namespace sce {
 
         bool empty() const;
         uint64_t size() const;
-        void clean();
+        void clear();
         void as_array(dT array[]) const;
 
         const list &operator=(const list &s);
         bool operator==(const list &s) const;
     };
 } /* namespace sce */
+#include "realization/list.cc"
 #endif /* STRUCTS_LIST_H_ */

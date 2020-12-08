@@ -22,11 +22,12 @@ namespace sce {
 
         bool empty();
         uint64_t size();
-        void clean();
+        void clear();
         void as_array(dT array[]);
 
         const queue &operator=(const queue &s);
         bool operator==(const queue &s) const;
     };
 } // namespace sce
+#include "realization/queue.cc"
 #endif /* STRUCTS_QUEUE_H_ */
