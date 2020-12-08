@@ -1,0 +1,28 @@
+BasedOnStyle: Google
+IndentWidth: 4
+ColumnLimit: 80
+SortIncludes: true
+MaxEmptyLinesToKeep: 2
+AccessModifierOffset: -4
+BraceWrapping:
+    AfterClass: false
+    AfterControlStatement: false
+    AfterEnum: false
+    AfterFunction: false
+    AfterNamespace: false
+    AfterObjCDeclaration: false
+    AfterStruct: false
+    AfterUnion: false
+    BeforeCatch: false
+    BeforeElse: false
+    IndentBraces: false
+SpacesBeforeTrailingComments: 1
+IncludeCategories: 
+  - Regex: '^"(llvm|llvm-c|clang|clang-c)/'
+    Priority: 2
+  - Regex: '^(<|"(gtest|isl|json)/)'
+    Priority: 3
+  - Regex: '.*'
+    Priority: 1
+IndentCaseLabels: true
+NamespaceIndentation: All
