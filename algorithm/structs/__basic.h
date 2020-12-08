@@ -1,5 +1,6 @@
 #ifndef STRUCTS_BASIC_H_
 #define STRUCTS_BASIC_H_
+#include "__builtin.h"
 namespace sce {
     template <class dT>
     class node {

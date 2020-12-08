@@ -3,10 +3,11 @@
 #include "__basic.h"
 namespace sce {
     template <class dT>
-    class stack {
-        private:
+    class stack : public __struct {
+    private:
         node *_head;
         uint64_t _len;
+
     public:
         stack();
         stack(dT data);
@@ -15,11 +16,11 @@ namespace sce {
         ~stack();
 
         void push(dT data);
-        auto pop(bool is_return=false);
-        dT top();
+        auto pop(bool is_return = false);
+        dT top() const;
 
-        bool empty();
-        uint64_t size();
+        bool empty() const;
+        uint64_t size() const;
         void clean();
         void as_array(dT array[]);
 
@@ -27,5 +28,4 @@ namespace sce {
         bool operator==(const stack &s) const;
     };
 } /* namespace sce */
-#endif
- 
+#endif /* STRUCTS_STACK_H_ */
