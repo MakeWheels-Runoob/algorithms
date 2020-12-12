@@ -16,9 +16,9 @@ namespace sce{
     typedef char uint8_t;
     typedef unsigned short uint16_t;
     typedef unsigned int uint32_t;
-    typedef unsigned long long uint64_t;
-    const uint64_t MAX_SIZE=1e15;
-    const uint64_t MAX_NODE=1e10;
-    const uint64_t MAX_EDGE=1e12;
+    typedef unsigned long long size_t;
+    const size_t MAX_SIZE=1e15;
+    const size_t MAX_NODE=1e10;
+    const size_t MAX_EDGE=1e12;
 }
 #endif

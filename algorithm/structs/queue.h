@@ -2,11 +2,11 @@
 #define STRUCTS_QUEUE_H_
 #include "__basic.h"
 namespace sce {
-    template <class dT>
+    template <typename dT>
     class queue : public __struct {
-    private:
+    protected:
         node *_head, *_tail;
-        uint64_t _len;
+        size_t _len;
 
     public:
         queue();
@@ -21,9 +21,38 @@ namespace sce {
         dT tail();
 
         bool empty();
-        uint64_t size();
+        size_t size();
         void clear();
         void as_array(dT array[]);
+        std::string toString() const;
+
+        const queue &operator=(const queue &s);
+        bool operator==(const queue &s) const;
+    };
+
+    template <typename dT>
+    class deque : public queue {
+    private:
+        node *_head, *_tail;
+        size_t _len;
+
+    public:
+        deque();
+        deque(dT data);
+        deque(dT data[]);
+        deque(queue s);
+        ~deque();
+
+        void push(dT data, bool is_front = true);
+        auto pop(bool is_return = false, bool is_front = false);
+        dT front();
+        dT tail();
+
+        bool empty();
+        size_t size();
+        void clear();
+        void as_array(dT array[]);
+        std::string toString() const;
 
         const queue &operator=(const queue &s);
         bool operator==(const queue &s) const;

@@ -2,11 +2,11 @@
 #define STRUCTS_STACK_H_
 #include "__basic.h"
 namespace sce {
-    template <class dT>
+    template <typename dT>
     class stack : public __struct {
     private:
         node *_head;
-        uint64_t _len;
+        size_t _len;
 
     public:
         stack();
@@ -20,9 +20,10 @@ namespace sce {
         dT top() const;
 
         bool empty() const;
-        uint64_t size() const;
+        size_t size() const;
         void clear();
         void as_array(dT array[]);
+        std::string toString() const;
 
         const stack &operator=(const stack &s);
         bool operator==(const stack &s) const;

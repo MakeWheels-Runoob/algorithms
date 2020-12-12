@@ -2,11 +2,11 @@
 #define STRUCTS_LIST_H_
 #include "__basic.h"
 namespace sce {
-    template <class dT>
+    template <typename dT>
     class list : public __struct {
     private:
         node *_head, *_tail;
-        uint64_t _len;
+        size_t _len;
 
     public:
         list();
@@ -15,24 +15,25 @@ namespace sce {
         list(list s);
         ~list();
 
-        void insert(uint64_t where,dT data);
-        dT query(uint64_t where) const;
-        auto del(uint64_t where,bool is_return=false);
+        void insert(size_t where,dT data);
+        dT query(size_t where) const;
+        auto del(size_t where,bool is_return=false);
 
         bool empty() const;
-        uint64_t size() const;
+        size_t size() const;
         void clean();
         void as_array(dT array[]) const;
+        std::string toString() const;
 
         const list &operator=(const list &s);
         bool operator==(const list &s) const;
     };
 
-    template <class dT>
+    template <typename dT>
     class Clist : public __struct {
     private:
         node *_head, *_tail;
-        uint64_t _len;
+        size_t _len;
 
     public:
         Clist();
@@ -41,14 +42,15 @@ namespace sce {
         Clist(list s);
         ~Clist();
 
-        void insert(uint64_t where,dT data);
-        dT query(uint64_t where) const;
-        auto del(uint64_t where,bool is_return=false);
+        void insert(size_t where,dT data);
+        dT query(size_t where) const;
+        auto del(size_t where,bool is_return=false);
 
         bool empty() const;
-        uint64_t size() const;
+        size_t size() const;
         void clear();
         void as_array(dT array[]) const;
+        std::string toString() const;
 
         const list &operator=(const list &s);
         bool operator==(const list &s) const;
