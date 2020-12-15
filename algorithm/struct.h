@@ -1,5 +1,5 @@
-#ifndef ALGORTHMS_STRUCT_H_
-#define ALGORTHMS_STRUCT_H_
+#ifndef ALGORITHMS_STRUCT_H_
+#define ALGORITHMS_STRUCT_H_
 #include "structs/graph.h"
 #include "structs/list.h"
 #include "structs/queue.h"
